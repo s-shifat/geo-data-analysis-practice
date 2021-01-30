@@ -66,6 +66,7 @@ clean_data('1995')
 
 # storing cleaned data in a dictionary named df for easy future use
 df = dict((x,clean_data(x)) for x in convenient_column_names[3:])
+df
 
 
 # 
@@ -73,23 +74,19 @@ df = dict((x,clean_data(x)) for x in convenient_column_names[3:])
 # 
 # ### Load Bangladesh Shape file
 
-# In[38]:
+# In[8]:
 
 
 # Plot map of Bangladesh
 bd_map_ax = gpd.read_file('./Bangladesh.shp').plot(edgecolor='black', color='white')
 
 
-# In[66]:
+# In[13]:
 
-
-# plot well data of 1995 on map of Bangladesh
-well_points_1995 = df['1995'].loc[:,['1995','geometry']].plot(color='red', marker='+',ax=bd_map_ax)
-well_points_1995.set_title('1995');
-fig = well_points_1995.get_figure()
 
 # Now converting this work-flow to a function for rest data
-def generate_plot(column_name,geometry_col='geometry',df=df,country_ax=bd_map_ax):
+def generate_plot(column_name,geometry_col='geometry',df=df):
+    country_ax = gpd.read_file('./Bangladesh.shp').plot(edgecolor='black', color='white')
     da = df[column_name].copy()
     well_points = da.loc[:,[column_name,geometry_col]].plot(color='red', marker='+',ax=country_ax)
     well_points.set_title(column_name);
@@ -97,13 +94,16 @@ def generate_plot(column_name,geometry_col='geometry',df=df,country_ax=bd_map_ax
     return fig
 
 
-# In[94]:
+# In[14]:
 
 
 # Store every figures in another dictionary
+li =[]
 for x in convenient_column_names[3:]:
-    print(x)
-    generate_plot(x).show()
+    d = generate_plot(x)
+    d.savefig(x+'.png')
+    li.append(d)
+li
 
 
 # In[ ]:
